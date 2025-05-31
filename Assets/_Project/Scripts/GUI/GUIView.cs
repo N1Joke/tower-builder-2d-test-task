@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,5 +9,6 @@ namespace GUI
         [field: SerializeField] public ScrollRect scrollRect;
         [field: SerializeField] public RectTransform scrollContent;
         [field: SerializeField] public Canvas canvas;
+        [field: SerializeField] public TextMeshProUGUI messageContainer;
     }
 }

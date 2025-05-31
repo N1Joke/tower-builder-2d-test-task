@@ -2,6 +2,7 @@
 using Assets._Project.Scripts.Items;
 using Assets._Project.Scripts.Presets;
 using Core;
+using Presets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,8 @@ namespace Assets._Project.Scripts.GUI
             public RectTransform content;
             public Canvas canvas;
             public ITowerBuilder towerBuilder;
+            public ILogMessenger logMessenger;
+            public GameSettings gameConfig;
         }
 
         private readonly Ctx _ctx;
@@ -42,7 +45,9 @@ namespace Assets._Project.Scripts.GUI
                     id = i,
                     scrollRect = _ctx.scrollRect,
                     towerBuilder = _ctx.towerBuilder,
-                    scrollChecker = this
+                    scrollChecker = this,
+                    logMessenger = _ctx.logMessenger,
+                    gameConfig = _ctx.gameConfig
                 }));
             }
         }

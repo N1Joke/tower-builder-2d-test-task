@@ -1,8 +1,10 @@
 ﻿using Assets._Project.Scripts.Gameplay;
 using Assets._Project.Scripts.GUI;
+using Assets._Project.Scripts.Localization;
 using Assets._Project.Scripts.Presets;
 using Core;
 using DG.Tweening;
+using Presets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +20,9 @@ namespace Assets._Project.Scripts.Items
             public ItemConfig config;
             public int id;
             public ITowerBuilder towerBuilder;
-            internal IScrollChecker scrollChecker;
+            public IScrollChecker scrollChecker;
+            public ILogMessenger logMessenger;
+            public GameSettings gameConfig;
         }
 
         protected readonly Ctx _ctx;
@@ -44,19 +48,23 @@ namespace Assets._Project.Scripts.Items
         {
             if (_ctx.scrollChecker.IsInScrollPlate(rectTransform))
             {
+                _ctx.logMessenger.ShowLog(LocalizationKeys.FAIL_DRAG_CUBE_IN_SCROLL);
                 DestroyWithAnimation(rectTransform);
                 return;
             }
             if (_ctx.towerBuilder.PlaceItem(rectTransform, _ctx.id))
+            {
                 GameObject.Destroy(rectTransform.gameObject);
+                _ctx.logMessenger.ShowLog(LocalizationKeys.SUCCESS_CUBE_PLACE);
+            }
             else
-                DestroyWithAnimation(rectTransform);
+                DestroyWithAnimation(rectTransform);            
         }
 
         private void DestroyWithAnimation(RectTransform rectTransform)
         {
-            rectTransform.DORotate(new Vector3(0f, 0f, 180f), 0.25f).SetEase(Ease.Linear).SetLink(rectTransform.gameObject);
-            rectTransform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.Linear).SetLink(rectTransform.gameObject).OnComplete(() => GameObject.Destroy(rectTransform.gameObject));
+            rectTransform.DORotate(new Vector3(0f, 0f, 180f), _ctx.gameConfig.cubeDestroyTime).SetEase(Ease.Linear).SetLink(rectTransform.gameObject);
+            rectTransform.DOScale(Vector3.zero, _ctx.gameConfig.cubeDestroyTime).SetEase(Ease.Linear).SetLink(rectTransform.gameObject).OnComplete(() => GameObject.Destroy(rectTransform.gameObject));
         }
     }
 }

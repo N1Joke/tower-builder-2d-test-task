@@ -17,7 +17,6 @@ namespace Assets._Project.Scripts.Gameplay
             _ctx = ctx;
         }
 
-
         public SpriteRenderer hole;
 
         public Vector3 HoleCenter => _ctx.view.transform.position;

@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: GameTexts_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: df62eb194a4427342953bb32aeed2041, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 9458356224
+    m_Localized: 'Drag fail: cube steel in scroll'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8216171974656
+    m_Localized: 'Drag fail: out of tower build area'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8229694410752
+    m_Localized: 'Drag fail: out of screen'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8240696070144
+    m_Localized: 'Drag fail: not valid place placement on tower '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8251873890304
+    m_Localized: Success cube placement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8263613747200
+    m_Localized: Cube moved in trash hole
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8277660471296
+    m_Localized: 'Drag fail: cube not fully in hole borders'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

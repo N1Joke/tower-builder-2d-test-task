@@ -4,8 +4,14 @@ using UnityEngine.UI;
 using Assets._Project.Scripts.Items;
 using System.Collections.Generic;
 using Assets._Project.Scripts.Presets;
-using UniRx;
 using Cysharp.Threading.Tasks;
+using Assets._Project.Scripts.GUI;
+using Assets._Project.Scripts.Localization;
+using Presets;
+using System;
+using Random = UnityEngine.Random;
+using Assets._Project.Scripts.UserData;
+using static UnityEditor.Progress;
 
 namespace Assets._Project.Scripts.Gameplay
 {
@@ -16,7 +22,10 @@ namespace Assets._Project.Scripts.Gameplay
             public SpriteRenderer spriteRenderer;
             public Camera camera;
             public ITrashHole trashHole;
-            public ItemConfig config;             
+            public ItemConfig itemsConfig;          
+            public GameSettings gameConfig;          
+            public ILogMessenger logMessenger;
+            public ITowerSaver towerSaver;
         }
 
         private const int CubeSortOrder = 1;
@@ -28,32 +37,74 @@ namespace Assets._Project.Scripts.Gameplay
         public TowerBuilder(Ctx ctx)
         {
             _ctx = ctx;
+
+            Init();
         }
 
+        private void Init()
+        {
+            var towerData =  _ctx.towerSaver.GetTowerData();
+            if (towerData == null || towerData.Length == 0)
+                return;
+
+            for (int i = 0; i < towerData.Length; i++)
+            {
+                BaseItemView baseItemView = SpawnItemView(_ctx.itemsConfig.GetSprite(towerData[i].id), towerData[i].Position);
+                var item = new BaseItem(new BaseItem.Ctx
+                {
+                    id = towerData[i].id,
+                    view = baseItemView,
+                    trashHole = _ctx.trashHole,
+                    logMessenger = _ctx.logMessenger,
+                    gameConfig = _ctx.gameConfig,
+                });
+
+                _items.Add(item);
+                AddDispose(item.OnDestroy.SubscribeWithSkip(RemoveElementFromTower));
+            }
+        }
+        
         public bool PlaceItem(RectTransform rect, int id)
         {
             Vector3 worldPos = GetWorldPos(rect);
 
-            if (IsOverValidPosition(rect, worldPos))
+            if (Validate(rect, worldPos, id))
             {
-                BaseItemView baseItemView = SpawnSpriteFromImageOnCamera(rect.GetComponent<Image>(), worldPos);
+                BaseItemView baseItemView = SpawnItemView(rect.GetComponent<Image>().sprite, worldPos);
                 var item = new BaseItem(new BaseItem.Ctx
                 {
                     id = id,
                     view = baseItemView,
-                    trashHole = _ctx.trashHole
+                    trashHole = _ctx.trashHole,
+                    logMessenger = _ctx.logMessenger,
+                    gameConfig = _ctx.gameConfig,
                 });
 
                 PlaceCubeWithLogic(item);
                 _items.Add(item);
                 AddDispose(item.OnDestroy.SubscribeWithSkip(RemoveElementFromTower));
+
+                SaveTower();
+
                 Debug.Log($"[TowerBuilder] valid pos {rect.anchoredPosition}");
                 return true;
             }
-
+            
             Debug.Log($"[TowerBuilder] invalid pos {rect.anchoredPosition}");
             return false;
         }
+
+        private BaseItemView SpawnItemView(Sprite image, Vector3 worldPos)
+        {
+            BaseItemView itemView = GameObject.Instantiate(_ctx.itemsConfig.itemView);
+
+            itemView.spriteRenderer.sprite = image;
+            itemView.spriteRenderer.sortingOrder = CubeSortOrder;
+            itemView.transform.position = worldPos;
+            itemView.transform.localScale = new Vector3(CubeSize, CubeSize, CubeSize);
+
+            return itemView;
+        }       
 
         private Vector3 GetWorldPos(RectTransform rectTransform)
         {
@@ -80,7 +131,7 @@ namespace Assets._Project.Scripts.Gameplay
             item.JumpIntoPos(posToJump);
         }
 
-        private bool IsOverValidPosition(RectTransform rectTransform, Vector3 worldPos)
+        private bool Validate(RectTransform rectTransform, Vector3 worldPos, int id)
         {
             Vector3[] imageCorners = new Vector3[4];
             rectTransform.GetWorldCorners(imageCorners);
@@ -106,7 +157,18 @@ namespace Assets._Project.Scripts.Gameplay
             Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
             bool isFullyInsideScreen = screenRect.Contains(imageRect.min) && screenRect.Contains(imageRect.max);
 
-            return isFullyInsideSprite && isFullyInsideScreen && CanPlaceOnTower(worldPos);
+            bool placementValid = CanPlaceOnTower(worldPos);
+
+            bool idValidId = IsSameIdAsLast(id); //use if need below to check color
+
+            if (!isFullyInsideScreen)
+                _ctx.logMessenger.ShowLog(LocalizationKeys.FAIL_DRAG_CUBE_OUT_OF_SCREEN);
+            else if (!isFullyInsideSprite)
+                _ctx.logMessenger.ShowLog(LocalizationKeys.FAIL_DRAG_CUBE_OUT_OF_TOWER_AREA);
+            else if (!placementValid)
+                _ctx.logMessenger.ShowLog(LocalizationKeys.FAIL_DRAG_CUBE_NOT_VALID_TOWER_POS);
+
+            return isFullyInsideSprite && isFullyInsideScreen && placementValid;
         }
 
         private bool CanPlaceOnTower(Vector3 worldPos)
@@ -131,16 +193,12 @@ namespace Assets._Project.Scripts.Gameplay
             return overlap >= (CubeFace / 2f) && worldPos.y >= lastItem.Pos.y + CubeFace;
         }
 
-        private BaseItemView SpawnSpriteFromImageOnCamera(Image image, Vector3 worldPos)
+        private bool IsSameIdAsLast(int id)
         {
-            BaseItemView itemView = GameObject.Instantiate(_ctx.config.itemView);
+            if (_items.Count == 0)
+                return true;
 
-            itemView.spriteRenderer.sprite = image.sprite;
-            itemView.spriteRenderer.sortingOrder = CubeSortOrder;
-            itemView.transform.position = worldPos;
-            itemView.transform.localScale = new Vector3(CubeSize, CubeSize, CubeSize);
-
-            return itemView;
+            return id == _items[_items.Count - 1].Id;
         }
 
         private async void RemoveElementFromTower(BaseItem baseItem)
@@ -149,16 +207,28 @@ namespace Assets._Project.Scripts.Gameplay
            
             _items.RemoveAt(indexToRemove);
 
+            _ctx.logMessenger.ShowLog(LocalizationKeys.TRASH_HOLE_CUBE_REMOVE);
+
             Vector3 currentPos = baseItem.TowerPos;
             for (int i = indexToRemove; i < _items.Count; i++)
             {
                 Vector3 nextPos = _items[i].TowerPos;
                 _items[i].MoveTo(currentPos);
                 currentPos = nextPos;
-                await UniTask.Delay(100);
+                await UniTask.Delay(TimeSpan.FromSeconds(_ctx.gameConfig.delayBetweenRemoveElementFromTower));
             }
+
+            SaveTower();
         }
 
+        private void SaveTower()
+        {
+            CubeData[] cubeData = new CubeData[_items.Count];
+            for (int i = 0; i < _items.Count; i++)
+                cubeData[i] = new CubeData() { id = _items[i].Id, Position = _items[i].TowerPos };
+
+            _ctx.towerSaver.SaveTowerData(cubeData);
+        }
 
         protected override void OnDispose()
         {

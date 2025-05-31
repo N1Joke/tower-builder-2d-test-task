@@ -6,6 +6,9 @@ using Assets._Project.Scripts.Gameplay;
 using Assets._Project.Scripts.GUI;
 using Assets._Project.Scripts.Presets;
 using GUI;
+using Presets;
+using UserSave;
+using Assets._Project.Scripts.UserData;
 
 namespace MonoInstallers
 {
@@ -19,7 +22,13 @@ namespace MonoInstallers
         [Inject]
         private ItemConfig _itemConfig;
         [Inject]
+        private GameSettings _gameSettings;
+        [Inject]
         private GUIView _guiView;
+        [Inject]
+        private ILogMessenger _logMessenger;
+        [Inject]
+        private ITowerSaver _towerSaver;
 
         public override void InstallBindings() { }
 
@@ -36,7 +45,10 @@ namespace MonoInstallers
                 camera = _camera,
                 spriteRenderer = _towerSpritePart,
                 trashHole = trashHole,
-                config = _itemConfig
+                itemsConfig = _itemConfig,
+                logMessenger = _logMessenger,
+                gameConfig = _gameSettings,
+                towerSaver = _towerSaver
             });
             _disposables.Add(towerBuilder);
 
@@ -46,7 +58,9 @@ namespace MonoInstallers
                 content = _guiView.scrollContent,
                 scrollRect = _guiView.scrollRect,
                 canvas = _guiView.canvas,
-                towerBuilder = towerBuilder
+                towerBuilder = towerBuilder,
+                logMessenger = _logMessenger,
+                gameConfig = _gameSettings
             }));
         }
 

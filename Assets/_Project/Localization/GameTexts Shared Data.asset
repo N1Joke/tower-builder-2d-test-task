@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: GameTexts Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: GameTexts
+  m_TableCollectionNameGuidString: df62eb194a4427342953bb32aeed2041
+  m_Entries:
+  - m_Id: 9458356224
+    m_Key: FAIL_DRAG_CUBE_IN_SCROLL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8216171974656
+    m_Key: FAIL_DRAG_CUBE_OUT_OF_TOWER_AREA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8229694410752
+    m_Key: FAIL_DRAG_CUBE_OUT_OF_SCREEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8240696070144
+    m_Key: FAIL_DRAG_CUBE_NOT_VALID_TOWER_POS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8251873890304
+    m_Key: SUCCESS_CUBE_PLACE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8263613747200
+    m_Key: TRASH_HOLE_CUBE_REMOVE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8277660471296
+    m_Key: CUBE_BACK_TO_TOWER
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 374635111965261848
+  references:
+    version: 2
+    RefIds:
+    - rid: 374635111965261848
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1748695211762
