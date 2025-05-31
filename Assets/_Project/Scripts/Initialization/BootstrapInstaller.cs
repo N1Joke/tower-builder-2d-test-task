@@ -1,3 +1,5 @@
+using Assets._Project.Scripts.GUI;
+using Assets._Project.Scripts.Presets;
 using GUI;
 using Presets;
 using System;
@@ -13,20 +15,31 @@ namespace MonoInstallers
         [SerializeField] private GUIView _guiViewPrefab;
         [Header("Presets")]
         [SerializeField] private GameSettings _gameSettings;
+        [SerializeField] private ItemConfig _itemConfig;
 
         private List<IDisposable> _disposables = new List<IDisposable>();
+        private GUIView _guiInstance;
 
         public override void InstallBindings()
         {
             DontDestroyOnLoad(this);
+        }
 
-            var guiInstance = Instantiate(_guiViewPrefab, transform);
+        private void Awake()
+        {
+            Container.Bind<ItemConfig>().FromScriptableObject(_itemConfig).AsSingle();
+            Container.Bind<GameSettings>().FromScriptableObject(_gameSettings).AsSingle();
 
-           
+            _guiInstance = Instantiate(_guiViewPrefab, transform);
+            Container.Bind<GUIView>().FromInstance(_guiInstance).AsSingle();
+
+            base.Start();
         }
 
         private void OnDestroy()
         {
+            GameObject.Destroy(_guiInstance.gameObject);
+
             for (int i = _disposables.Count - 1; i >= 0; i--)
                 _disposables[i]?.Dispose();
             _disposables.Clear();
