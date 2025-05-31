@@ -5,6 +5,6 @@ namespace Assets._Project.Scripts.Items
 {
     public class ScrollItemView : MonoBehaviour
     {
-        [field: SerializeField] public DragHandler dragHandler { get; private set; }
+        [field: SerializeField] public CanvasDragHandler dragHandler { get; private set; }
     }
 }

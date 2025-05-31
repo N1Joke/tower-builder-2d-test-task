@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5898711729094809012}
   - component: {fileID: 8574788418058752744}
   - component: {fileID: -5539008074503336752}
-  - component: {fileID: 785200455486085689}
+  - component: {fileID: 6474907253113891902}
   m_Layer: 0
   m_Name: ScrollItemView
   m_TagString: Untagged
@@ -89,8 +89,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95c6d079b21bbcb4a9c03b44c96dd9be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <dragHandler>k__BackingField: {fileID: 785200455486085689}
---- !u!114 &785200455486085689
+  <dragHandler>k__BackingField: {fileID: 6474907253113891902}
+--- !u!114 &6474907253113891902
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,6 +99,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 9011242518900172815}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78c74d0d8f413184c9b92903ba6db81d, type: 3}
+  m_Script: {fileID: 11500000, guid: f7e310dae69d71e458b663d7ab4e2912, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

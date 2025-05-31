@@ -1,12 +1,10 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine;
 using Tools.Extensions;
-using Assets._Project.Scripts.Gameplay;
-using System.ComponentModel;
 
 namespace Assets._Project.Scripts.Tools
 {
-    public class DragHandler : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
+    public class CanvasDragHandler : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         private Vector2 _pointerStartPos;
         private Vector2 _pointerPos;
@@ -50,7 +48,7 @@ namespace Assets._Project.Scripts.Tools
             if (_tempItemRect != null)
                 _tempItemRect.anchoredPosition += eventData.delta / _canvas.scaleFactor;
             else if (_pointerPos.y - _pointerStartPos.y > _offsetYTouchToSpawnCard)
-                ProcessActionOnCardMoveDelta();
+                ProcessActionOnItemMoveDelta();
             else
             {
                 if (!_startedDrag)
@@ -80,15 +78,13 @@ namespace Assets._Project.Scripts.Tools
         private void ResetDragHandler()
         {
             _tempItemRect = null;
-            
-
         }
 
-        private void ProcessActionOnCardMoveDelta()
+        private void ProcessActionOnItemMoveDelta()
         {
             var instance = Instantiate(gameObject, _canvas.transform);
             _tempItemRect = instance.GetComponent<RectTransform>();
-            var copyDragHandler = instance.GetComponent<DragHandler>();
+            var copyDragHandler = instance.GetComponent<CanvasDragHandler>();
             copyDragHandler.enabled = false;
             _tempItemRect.position = _rectTransform.position;
             _tempItemRect.sizeDelta = _rectTransform.sizeDelta;

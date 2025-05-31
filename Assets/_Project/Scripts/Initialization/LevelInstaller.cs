@@ -11,8 +11,9 @@ namespace MonoInstallers
 {
     public class LevelInstaller : MonoInstaller
     {
-        [field: SerializeField] private SpriteRenderer _towerSpritePart;
-        [field: SerializeField] private Camera _camera;
+        [SerializeField] private SpriteRenderer _towerSpritePart;
+        [SerializeField] private Camera _camera;
+        [SerializeField] private TrashHoleView _trashHoleView;
 
         private List<IDisposable> _disposables = new List<IDisposable>();
         [Inject]
@@ -20,17 +21,22 @@ namespace MonoInstallers
         [Inject]
         private GUIView _guiView;
 
-        public override void InstallBindings()
-        {
-           
-        }
+        public override void InstallBindings() { }
 
         private void Awake()
         {
+            var trashHole = new TrashHole(new TrashHole.Ctx
+            {
+                view = _trashHoleView
+            });
+            _disposables.Add(trashHole);
+
             var towerBuilder = new TowerBuilder(new TowerBuilder.Ctx
             {
                 camera = _camera,
-                spriteRenderer = _towerSpritePart
+                spriteRenderer = _towerSpritePart,
+                trashHole = trashHole,
+                config = _itemConfig
             });
             _disposables.Add(towerBuilder);
 

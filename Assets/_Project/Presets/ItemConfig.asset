@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 944a491f62000b148935593e9de6a46e, type: 3}
   m_Name: ItemConfig
   m_EditorClassIdentifier: 
-  <itemViewPrefab>k__BackingField: {fileID: 4235085675099775361, guid: bec89cf672015a043aa1da86993e0d2a, type: 3}
+  <itemView>k__BackingField: {fileID: 7936192131835580623, guid: bec89cf672015a043aa1da86993e0d2a, type: 3}
   <scrollItemViewPrefab>k__BackingField: {fileID: -5539008074503336752, guid: dc701391276e0a8458c79715ea70210c, type: 3}
   <itemSprites>k__BackingField:
   - {fileID: 21300000, guid: c43b206fa845f9347bb4c547a85143b5, type: 3}
