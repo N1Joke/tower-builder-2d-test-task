@@ -19,7 +19,7 @@ namespace Assets._Project.Scripts.Gameplay
     {
         public struct Ctx
         {
-            public SpriteRenderer spriteRenderer;
+            public Collider2D backgroundCollider;
             public Camera camera;
             public ITrashHole trashHole;
             public ItemConfig itemsConfig;          
@@ -136,23 +136,37 @@ namespace Assets._Project.Scripts.Gameplay
             Vector3[] imageCorners = new Vector3[4];
             rectTransform.GetWorldCorners(imageCorners);
 
-            for (int i = 0; i < 4; i++)
-                imageCorners[i] = RectTransformUtility.WorldToScreenPoint(null, imageCorners[i]);
+            float width = imageCorners[2].x - imageCorners[0].x;
+            float height = imageCorners[2].y - imageCorners[0].y;
+
+            // Уменьшаем размеры на 20%
+            float shrinkFactor = 0.2f;
+            float shrinkX = width * shrinkFactor * 0.5f;
+            float shrinkY = height * shrinkFactor * 0.5f;
 
             Rect imageRect = new Rect(
-                imageCorners[0].x,
-                imageCorners[0].y,
-                imageCorners[2].x - imageCorners[0].x,
-                imageCorners[2].y - imageCorners[0].y
+                imageCorners[0].x + shrinkX,
+                imageCorners[0].y + shrinkY,
+                width * (1 - shrinkFactor),
+                height * (1 - shrinkFactor)
             );
 
-            Bounds bounds = _ctx.spriteRenderer.bounds;
-            Vector3 min = _ctx.camera.WorldToScreenPoint(bounds.min);
-            Vector3 max = _ctx.camera.WorldToScreenPoint(bounds.max);
+            for (int i = 0; i < 4; i++)
+            {
+                Vector3 screenPoint = RectTransformUtility.WorldToScreenPoint(null, imageCorners[i]);
+                imageCorners[i] = _ctx.camera.ScreenToWorldPoint(screenPoint);
+                imageCorners[i].z = 0f; 
+            }
 
-            Rect spriteRect = new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
-
-            bool isFullyInsideSprite = spriteRect.Contains(imageRect.min) && spriteRect.Contains(imageRect.max);
+            bool isInsideTowerArea = true;
+            foreach (Vector3 corner in imageCorners)
+            {
+                if (!_ctx.backgroundCollider.OverlapPoint(corner))
+                {
+                    isInsideTowerArea = false;
+                    break;
+                }
+            }
 
             Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
             bool isFullyInsideScreen = screenRect.Contains(imageRect.min) && screenRect.Contains(imageRect.max);
@@ -163,12 +177,12 @@ namespace Assets._Project.Scripts.Gameplay
 
             if (!isFullyInsideScreen)
                 _ctx.logMessenger.ShowLog(LocalizationKeys.FAIL_DRAG_CUBE_OUT_OF_SCREEN);
-            else if (!isFullyInsideSprite)
+            else if (!isInsideTowerArea)
                 _ctx.logMessenger.ShowLog(LocalizationKeys.FAIL_DRAG_CUBE_OUT_OF_TOWER_AREA);
             else if (!placementValid)
                 _ctx.logMessenger.ShowLog(LocalizationKeys.FAIL_DRAG_CUBE_NOT_VALID_TOWER_POS);
 
-            return isFullyInsideSprite && isFullyInsideScreen && placementValid;
+            return isInsideTowerArea && isFullyInsideScreen && placementValid;
         }
 
         private bool CanPlaceOnTower(Vector3 worldPos)

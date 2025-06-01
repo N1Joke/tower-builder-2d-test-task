@@ -14,7 +14,7 @@ namespace MonoInstallers
 {
     public class LevelInstaller : MonoInstaller
     {
-        [SerializeField] private SpriteRenderer _towerSpritePart;
+        [SerializeField] private Collider2D _backgroundCollider;
         [SerializeField] private Camera _camera;
         [SerializeField] private TrashHoleView _trashHoleView;
 
@@ -43,7 +43,7 @@ namespace MonoInstallers
             var towerBuilder = new TowerBuilder(new TowerBuilder.Ctx
             {
                 camera = _camera,
-                spriteRenderer = _towerSpritePart,
+                backgroundCollider = _backgroundCollider,
                 trashHole = trashHole,
                 itemsConfig = _itemConfig,
                 logMessenger = _logMessenger,
