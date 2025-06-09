@@ -25,10 +25,7 @@ namespace MonoInstallers
         public override void InstallBindings()
         {
             DontDestroyOnLoad(this);
-        }
 
-        private void Awake()
-        {
             Container.Bind<ItemConfig>().FromScriptableObject(_itemConfig).AsSingle();
             Container.Bind<GameSettings>().FromScriptableObject(_gameSettings).AsSingle();
 
@@ -45,8 +42,6 @@ namespace MonoInstallers
             var userData = new UserData();
             Container.Bind<ITowerSaver>().FromInstance(userData).AsSingle();
             _disposables.Add(userData);
-
-            base.Start();
         }
 
         private void OnDestroy()
